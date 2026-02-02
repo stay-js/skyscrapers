@@ -15,6 +15,20 @@
       "when": 1770033196361,
       "tag": "0001_create_skyscrapers_table",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1770033330770,
+      "tag": "0002_seed_cities_table",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1770033341917,
+      "tag": "0003_seed_skyscrapers_table",
+      "breakpoints": true
     }
   ]
 }
