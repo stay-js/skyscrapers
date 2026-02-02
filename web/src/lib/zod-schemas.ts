@@ -16,3 +16,8 @@ export const skyscraperSchema = z.object({
   stories: z.coerce.number().int().positive().optional().nullable(),
   finished: z.coerce.number().int().positive().optional().nullable(),
 });
+
+export const citiesSchema = z.array(citySchema.extend({ id: z.number().int().positive() }));
+
+export type Cities = z.infer<typeof citiesSchema>;
+export type City = Cities[number];
