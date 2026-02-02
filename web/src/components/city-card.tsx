@@ -1,11 +1,13 @@
+import Link from 'next/link';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { Card, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { DeletePopover } from '~/components/delete-popover';
 import type { City } from '~/lib/zod-schemas';
 import { DELETE } from '~/lib/api-utils';
-import { DeletePopover } from './delete-popover';
 
 export function CityCard({ city }: { city: City }) {
   const utils = useQueryClient();
@@ -26,7 +28,11 @@ export function CityCard({ city }: { city: City }) {
         </Badge>
       </CardHeader>
 
-      <CardFooter>
+      <CardFooter className="gap-2">
+        <Button asChild>
+          <Link href={`/cities/${city.id}`}>Részletek</Link>
+        </Button>
+
         <DeletePopover type="Város" onDelete={() => deleteCity(city.id)} />
       </CardFooter>
     </Card>
