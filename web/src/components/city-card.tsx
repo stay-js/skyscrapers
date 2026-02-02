@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Card, CardFooter, CardHeader, CardTitle } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
+import { Skeleton } from '~/components/ui/skeleton';
 import { DeletePopover } from '~/components/delete-popover';
 import type { City } from '~/lib/zod-schemas';
 import { DELETE } from '~/lib/api-utils';
@@ -34,6 +35,22 @@ export function CityCard({ city }: { city: City }) {
         </Button>
 
         <DeletePopover type="Város" onDelete={() => deleteCity(city.id)} />
+      </CardFooter>
+    </Card>
+  );
+}
+
+export function CityCardSkeleton() {
+  return (
+    <Card className="flex flex-col gap-4">
+      <CardHeader className="flex items-center gap-2">
+        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-5 w-6" />
+      </CardHeader>
+
+      <CardFooter className="gap-2">
+        <Skeleton className="h-9 w-24" />
+        <Skeleton className="h-9 w-24" />
       </CardFooter>
     </Card>
   );
