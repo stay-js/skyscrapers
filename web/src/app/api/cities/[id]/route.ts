@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 
 import { db } from '~/server/db';
 import { cities } from '~/server/db/schema';
 import { citySchema, idParamSchema } from '~/lib/zod-schemas';
 
-export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const result = idParamSchema.safeParse(await params);
 
   if (!result.success) {
@@ -14,16 +14,16 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
 
   const { id } = result.data;
 
-  const city = await db.select().from(cities).where(eq(cities.id, id)).limit(1);
+  const city = await db.query.cities.findFirst({ where: eq(cities.id, id) });
 
-  if (!city?.[0]) {
+  if (!city) {
     return new NextResponse(null, { status: 404 });
   }
 
-  return NextResponse.json(city[0]);
+  return NextResponse.json(city);
 }
 
-export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const result = idParamSchema.safeParse(await params);
 
   if (!result.success) {
@@ -32,7 +32,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
 
   const { id } = result.data;
 
-  const exists = await db.select().from(cities).where(eq(cities.id, id)).limit(1);
+  const exists = await db.query.cities.findFirst({ where: eq(cities.id, id) });
 
   if (!exists) {
     return new NextResponse(null, { status: 404 });
@@ -43,7 +43,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
   return new NextResponse(null, { status: 204 });
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const paramResult = idParamSchema.safeParse(await params);
 
   if (!paramResult.success) {
@@ -65,7 +65,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     );
   }
 
-  const exists = await db.select().from(cities).where(eq(cities.id, id)).limit(1);
+  const exists = await db.query.cities.findFirst({ where: eq(cities.id, id) });
 
   if (!exists) {
     return new NextResponse(null, { status: 404 });

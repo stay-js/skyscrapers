@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 
 import { db } from '~/server/db';
 import { skyscrapers } from '~/server/db/schema';
 import { idParamSchema, skyscraperSchema } from '~/lib/zod-schemas';
 
-export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const result = idParamSchema.safeParse(await params);
 
   if (!result.success) {
@@ -17,16 +17,16 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
 
   const { id } = result.data;
 
-  const skyscraper = await db.select().from(skyscrapers).where(eq(skyscrapers.id, id)).limit(1);
+  const skyscraper = await db.query.skyscrapers.findFirst({ where: eq(skyscrapers.id, id) });
 
-  if (!skyscraper?.[0]) {
+  if (!skyscraper) {
     return new NextResponse(null, { status: 404 });
   }
 
-  return NextResponse.json(skyscraper[0]);
+  return NextResponse.json(skyscraper);
 }
 
-export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const result = idParamSchema.safeParse(await params);
 
   if (!result.success) {
@@ -38,7 +38,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
 
   const { id } = result.data;
 
-  const exists = await db.select().from(skyscrapers).where(eq(skyscrapers.id, id)).limit(1);
+  const exists = await db.query.skyscrapers.findFirst({ where: eq(skyscrapers.id, id) });
 
   if (!exists) {
     return new NextResponse(null, { status: 404 });
@@ -49,7 +49,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
   return new NextResponse(null, { status: 204 });
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const paramResult = idParamSchema.safeParse(await params);
 
   if (!paramResult.success) {
@@ -71,7 +71,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     );
   }
 
-  const exists = await db.select().from(skyscrapers).where(eq(skyscrapers.id, id)).limit(1);
+  const exists = await db.query.skyscrapers.findFirst({ where: eq(skyscrapers.id, id) });
 
   if (!exists) {
     return new NextResponse(null, { status: 404 });
